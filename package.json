@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node --trace-deprecation ./node_modules/next/dist/bin/next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@next/eslint-plugin-next": "14.0.1",
+    "@next/eslint-plugin-next": "^15.0.2",
     "mssql": "^11.0.1",
     "next": "14.0.1",
     "react": "18",
@@ -18,7 +18,7 @@
     "recharts": "^2.9.0"
   },
   "devDependencies": {
-    "eslint": "8",
-    "eslint-config-next": "14.0.1"
+    "eslint": "^9.14.0",
+    "eslint-config-next": "^15.0.2"
   }
 }
