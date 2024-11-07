@@ -1,18 +1,37 @@
 import sql from "mssql";
 import { connectToDB } from "./utils";
 
-// Stored procedure kullanarak tüm kullanıcıları getiren fonksiyon
-export const spLoginUsersGet = async () => {
+// // Stored procedure kullanarak tüm kullanıcıları getiren fonksiyon
+// // Şimdilik kullanılmadığı için kapattım.
+// export const spLoginUsersGet = async () => {
+//   try {
+//     await connectToDB(); // Veritabanı bağlantısını kontrol et ve aç
+//     const request = new sql.Request(); // Yeni bir SQL isteği oluştur
+
+//     // Stored procedure çalıştır
+//     const result = await request.execute("SpLoginUsersGet");
+
+//     return result.recordset;
+//   } catch (err) {
+//     throw new Error("Failed to spLoginUsersGet! - " + err.message);
+//   }
+// };
+
+// Stored procedure kullanarak kullanıcı arama yapan fonksiyon
+export const spLoginUserSearch = async (item) => {
   try {
     await connectToDB(); // Veritabanı bağlantısını kontrol et ve aç
     const request = new sql.Request(); // Yeni bir SQL isteği oluştur
 
-    // Stored procedure çalıştır
-    const result = await request.execute("SpLoginUsersGet");
+    // Parametreyi ekle
+    request.input('item', sql.VarChar(10), item); // @item parametresini ekliyoruz
+
+    // Stored procedure çalıştır ve sonuçları al
+    const result = await request.execute("SpLoginUserSearch");
 
     return result.recordset;
   } catch (err) {
-    throw new Error("Failed to fetch users!");
+    throw new Error("Failed to execute spLoginUserSearch! - " + err.message);
   }
 };
 
