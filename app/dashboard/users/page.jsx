@@ -1,9 +1,9 @@
-import { spLoginUserSearch, spLoginUserSearch_1 } from "@/app/lib/data";
-import Pagination from "@/app/ui/dashboard/pagination/pagination";
-import Search from "@/app/ui/dashboard/search/search";
-import styles from "@/app/ui/dashboard/users/users.module.css";
+import { spLoginUserSearch_1 } from "@/app/lib/data";
 import Image from "next/image";
 import Link from "next/link";
+import styles from "@/app/ui/dashboard/users/users.module.css";
+import Search from "@/app/ui/dashboard/search/search";
+import Pagination from "@/app/ui/dashboard/pagination/pagination";
 
 const UsersPage = async ({ searchParams }) => {
   const q = searchParams?.q || ""; // Arama sorgusunu URL'den alıyoruz
@@ -57,9 +57,13 @@ const UsersPage = async ({ searchParams }) => {
               <td>
                 <div className={styles.buttons}>
                   <Link href={`/dashboard/users/${user.ID}`}>
-                    <button className={`${styles.button} ${styles.view}`}>View</button>
+                    <button className={`${styles.button} ${styles.view}`}>
+                      View
+                    </button>
                   </Link>
-                  <button className={`${styles.button} ${styles.delete}`}>Delete</button>
+                  <button className={`${styles.button} ${styles.delete}`}>
+                    Delete
+                  </button>
                 </div>
               </td>
             </tr>
