@@ -18,7 +18,37 @@ import { connectToDB } from "./utils";
 // };
 
 // Stored procedure kullanarak kullanıcı arama yapan fonksiyon
-export const spLoginUserSearch = async (item) => {
+// Stored procedure offset ve fetch eklendi pagination için
+// USE [STEDB]
+// GO
+// /****** Object:  StoredProcedure [dbo].[SpLoginUserSearch]    Script Date: 17.11.2024 17:20:57 ******/
+// SET ANSI_NULLS ON
+// GO
+// SET QUOTED_IDENTIFIER ON
+// GO
+
+// --KULLANICI ARAMA
+// ALTER PROC [dbo].[SpLoginUserSearch]
+// (
+// @item VARCHAR(10),
+// @offset INT,
+// @fetch INT
+// )
+// AS
+// BEGIN
+// SELECT        *
+// FROM           Users
+// WHERE        UserName LIKE '%'+@item+'%' or NameSurname LIKE '%'+@item+'%'
+// ORDER BY CreateDate
+// OFFSET @offset ROWS
+// FETCH NEXT @fetch ROWS ONLY
+// END
+
+export const spLoginUserSearch = async (item, page) => {
+  const regex = new RegExp(item, "i");
+
+  const ITEM_PER_PAGE = 2;
+
   try {
     await connectToDB(); // Veritabanı bağlantısını kontrol et ve aç
     const request = new sql.Request(); // Yeni bir SQL isteği oluştur
@@ -26,7 +56,10 @@ export const spLoginUserSearch = async (item) => {
     // Parametreyi ekle
     const truncatedItem = item.slice(0, 10); // @item parametresini 10 kakter ile sınırlıyoruz.
     //request.input("item", sql.VarChar(10), item); // @item parametresini ekliyoruz
+    const offset = (page - 1) * ITEM_PER_PAGE;
     request.input("item", sql.VarChar(10), truncatedItem); // @item parametresini ekliyoruz
+    request.input("offset", sql.Int, offset); // @offset parametresini ekliyoruz
+    request.input("fetch", sql.Int, ITEM_PER_PAGE); // @fetch parametresini ekliyoruz
 
     // Stored procedure çalıştır ve sonuçları al
     const result = await request.execute("SpLoginUserSearch");
