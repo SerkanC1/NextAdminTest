@@ -44,31 +44,40 @@ import { connectToDB } from "./utils";
 // FETCH NEXT @fetch ROWS ONLY
 // END
 
-export const spLoginUserSearch = async (item, page) => {
-  const regex = new RegExp(item, "i");
-
+// Stored procedure kullanarak kullanıcı arama yapan fonksiyon
+export const spLoginUserSearch = async (item, page = 1) => {
   const ITEM_PER_PAGE = 2;
 
   try {
     await connectToDB(); // Veritabanı bağlantısını kontrol et ve aç
     const request = new sql.Request(); // Yeni bir SQL isteği oluştur
 
-    // Parametreyi ekle
-    const truncatedItem = item.slice(0, 10); // @item parametresini 10 kakter ile sınırlıyoruz.
-    //request.input("item", sql.VarChar(10), item); // @item parametresini ekliyoruz
+    // Toplam kullanıcı sayısını alıyoruz
+    const countResult = await request.query(`
+      SELECT COUNT(*) AS TotalCount 
+      FROM Users 
+      WHERE UserName LIKE '%' + '${item.slice(0, 10)}' + '%' OR NameSurname LIKE '%' + '${item.slice(0, 10)}' + '%'
+    `);
+    const count = countResult.recordset[0].TotalCount; // Toplam kullanıcı sayısını alıyoruz
+
+    // Parametreleri ekle
+    const truncatedItem = item.slice(0, 10); // @item parametresini 10 karakter ile sınırlıyoruz.
     const offset = (page - 1) * ITEM_PER_PAGE;
+
     request.input("item", sql.VarChar(10), truncatedItem); // @item parametresini ekliyoruz
     request.input("offset", sql.Int, offset); // @offset parametresini ekliyoruz
     request.input("fetch", sql.Int, ITEM_PER_PAGE); // @fetch parametresini ekliyoruz
 
     // Stored procedure çalıştır ve sonuçları al
     const result = await request.execute("SpLoginUserSearch");
+    const users = result.recordset; // Kullanıcı listesini alıyoruz
 
-    return result.recordset;
+    return { count, users }; // Toplam kullanıcı sayısı ve kullanıcı listesini döndürüyoruz
   } catch (err) {
     throw new Error("Failed to execute spLoginUserSearch! - " + err.message);
   }
 };
+
 
 // Tüm kullanıcıları getiren fonksiyon
 export const fetchAllUsers = async () => {

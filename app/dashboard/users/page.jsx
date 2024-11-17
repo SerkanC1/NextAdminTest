@@ -8,8 +8,7 @@ import Link from "next/link";
 const UsersPage = async ({ searchParams }) => {
   const q = searchParams?.q || ""; // Arama sorgusunu URL'den alıyoruz
   const page = searchParams?.page || 1; // Sayfa numarasını URL'den alıyoruz
-
-  const users = await spLoginUserSearch(q, page); // Arama parametresini kullanarak kullanıcıları getiriyoruz
+  const { count, users } = await spLoginUserSearch(q, page); // Arama parametresini kullanarak kullanıcıları getiriyoruz
 
   return (
     <div className={styles.container}>
@@ -67,7 +66,7 @@ const UsersPage = async ({ searchParams }) => {
           ))}
         </tbody>
       </table>
-      <Pagination currentPage={page} />
+      <Pagination count={count} />
     </div>
   );
 };
