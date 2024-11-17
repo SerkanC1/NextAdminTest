@@ -24,7 +24,9 @@ export const spLoginUserSearch = async (item) => {
     const request = new sql.Request(); // Yeni bir SQL isteği oluştur
 
     // Parametreyi ekle
-    request.input('item', sql.VarChar(10), item); // @item parametresini ekliyoruz
+    const truncatedItem = item.slice(0, 10); // @item parametresini 10 kakter ile sınırlıyoruz.
+    //request.input("item", sql.VarChar(10), item); // @item parametresini ekliyoruz
+    request.input("item", sql.VarChar(10), truncatedItem); // @item parametresini ekliyoruz
 
     // Stored procedure çalıştır ve sonuçları al
     const result = await request.execute("SpLoginUserSearch");
