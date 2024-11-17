@@ -1,4 +1,4 @@
-import { spLoginUserSearch } from "@/app/lib/data";
+import { spLoginUserSearch, spLoginUserSearch_1 } from "@/app/lib/data";
 import Pagination from "@/app/ui/dashboard/pagination/pagination";
 import Search from "@/app/ui/dashboard/search/search";
 import styles from "@/app/ui/dashboard/users/users.module.css";
@@ -8,7 +8,7 @@ import Link from "next/link";
 const UsersPage = async ({ searchParams }) => {
   const q = searchParams?.q || ""; // Arama sorgusunu URL'den alıyoruz
   const page = searchParams?.page || 1; // Sayfa numarasını URL'den alıyoruz
-  const { count, users } = await spLoginUserSearch(q, page); // Arama parametresini kullanarak kullanıcıları getiriyoruz
+  const { count, users } = await spLoginUserSearch_1(q, page); // Arama parametresini kullanarak kullanıcıları getiriyoruz
 
   return (
     <div className={styles.container}>

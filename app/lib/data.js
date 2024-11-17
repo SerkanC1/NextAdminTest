@@ -1,6 +1,34 @@
 import sql from "mssql";
 import { connectToDB } from "./utils";
 
+// Stored procedure kullanarak kullanıcı arama yapan fonksiyon
+export const spLoginUserSearch_1 = async (item, page = 1) => {
+  const ITEM_PER_PAGE = 2;
+
+  try {
+    await connectToDB(); // Veritabanı bağlantısını kontrol et ve aç
+    const request = new sql.Request(); // Yeni bir SQL isteği oluştur
+
+    // Parametreleri ekle
+    const truncatedItem = item.slice(0, 10); // @item parametresini 10 karakter ile sınırlandırıyoruz.
+    const offset = (page - 1) * ITEM_PER_PAGE;
+
+    request.input("item", sql.VarChar(10), truncatedItem); // @item parametresini ekliyoruz
+    request.input("offset", sql.Int, offset); // @offset parametresini ekliyoruz
+    request.input("fetch", sql.Int, ITEM_PER_PAGE); // @fetch parametresini ekliyoruz
+
+    // Stored procedure çalıştır ve sonuçları al
+    const result = await request.execute("SpLoginUserSearch_1");
+
+    const count = result.recordsets[1][0].TotalCount; // Toplam kullanıcı sayısını alıyoruz
+    const users = result.recordsets[0]; // Kullanıcı listesini alıyoruz
+
+    return { count, users }; // Toplam kullanıcı sayısı ve kullanıcı listesini döndürüyoruz
+  } catch (err) {
+    throw new Error("Failed to execute spLoginUserSearch_1! - " + err.message);
+  }
+};
+
 // // Stored procedure kullanarak tüm kullanıcıları getiren fonksiyon
 // // Şimdilik kullanılmadığı için kapattım.
 // export const spLoginUsersGet = async () => {
@@ -56,7 +84,10 @@ export const spLoginUserSearch = async (item, page = 1) => {
     const countResult = await request.query(`
       SELECT COUNT(*) AS TotalCount 
       FROM Users 
-      WHERE UserName LIKE '%' + '${item.slice(0, 10)}' + '%' OR NameSurname LIKE '%' + '${item.slice(0, 10)}' + '%'
+      WHERE UserName LIKE '%' + '${item.slice(
+        0,
+        10
+      )}' + '%' OR NameSurname LIKE '%' + '${item.slice(0, 10)}' + '%'
     `);
     const count = countResult.recordset[0].TotalCount; // Toplam kullanıcı sayısını alıyoruz
 
@@ -77,7 +108,6 @@ export const spLoginUserSearch = async (item, page = 1) => {
     throw new Error("Failed to execute spLoginUserSearch! - " + err.message);
   }
 };
-
 
 // Tüm kullanıcıları getiren fonksiyon
 export const fetchAllUsers = async () => {
