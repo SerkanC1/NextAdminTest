@@ -139,3 +139,50 @@ BEGIN
 
   DROP TABLE #TotalCount;
 END
+
+GO 
+
+--KULLANICI EKLE 
+ALTER PROC [dbo].[SpLoginUserInsert]
+(
+@UserName VARCHAR(20),
+@Password NVARCHAR(255),  --hash için yapıldı.
+@NameSurname VARCHAR(50),
+--@CreateDate DATETIME,
+@Admin BIT,
+@Active BIT
+)
+AS
+BEGIN
+INSERT INTO Users (UserName,Password_,NameSurname,CreateDate,Admin_,Active)
+VALUES(@UserName,@Password,@NameSurname,getdate(),@Admin,@Active)
+END
+
+GO
+
+--KULLANICI DÜZENLE
+ALTER PROC [dbo].[SpLoginUserUpdate]
+(
+@ID INT,
+@UserName VARCHAR(20),
+@Password NVARCHAR(255), --hash için yapıldı.
+@NameSurname VARCHAR(50),
+@Admin BIT,
+@Active BIT
+)
+AS
+BEGIN
+UPDATE Users SET
+UserName=@UserName,
+Password_= @Password,
+NameSurname= @NameSurname,
+Admin_ = @Admin,
+Active = @Active
+WHERE ID=@ID
+END
+
+GO
+
+--Hash'lenmiş şifreyi saklamak için. 
+ALTER TABLE DeletedUsersLog
+ALTER COLUMN Password_ NVARCHAR(255);

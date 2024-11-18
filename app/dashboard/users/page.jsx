@@ -1,3 +1,4 @@
+import { deleteUser } from "@/app/lib/actions";
 import { spLoginUserSearch_1 } from "@/app/lib/data";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,7 +39,7 @@ const UsersPage = async ({ searchParams }) => {
               <td>
                 <div className={styles.user}>
                   <Image
-                    src="/noavatar.png"
+                    src={user.img || "/noavatar.png"}
                     alt={user.NameSurname}
                     width={40}
                     height={40}
@@ -61,9 +62,12 @@ const UsersPage = async ({ searchParams }) => {
                       View
                     </button>
                   </Link>
-                  <button className={`${styles.button} ${styles.delete}`}>
-                    Delete
-                  </button>
+                  <form action={deleteUser}>
+                    <input type="hidden" name="id" value={user.ID} />
+                    <button className={`${styles.button} ${styles.delete}`}>
+                      Delete
+                    </button>
+                  </form>
                 </div>
               </td>
             </tr>
