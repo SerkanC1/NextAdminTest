@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@next/eslint-plugin-next": "^15.0.2",
+    "bcrypt": "^5.1.1",
     "mssql": "^11.0.1",
     "next": "14.0.1",
     "react": "18",
